@@ -35,8 +35,7 @@ var legend_svg = d3.select("#legend_container")
 
 var hue = "g";	/* b=blue, g=green, r=red colours - from ColorBrewer */
 
-/* break the data values into 9 ranges of €100 each   */
-/* max and min values already known so 400-1300 works */
+/* break the data values into 9 ranges*/
 var quantize = d3.scale.quantize()
     .domain([0, 9])
     .range(d3.range(9).map(function(i) { return hue + i + "-9"; }));
@@ -112,6 +111,9 @@ queue()
     .defer(d3.csv, "secrets/fake_data.csv", data)
     .await(ready);
 
+    
+
+
 function ready(error, data) {
   if (error) throw error;
 
@@ -124,7 +126,7 @@ function ready(error, data) {
     var countyTable = tabulate(data, ["county", "rental"]);		/* render the data table */
     console.log(xml);
     var svgMap = xml.getElementsByTagName("g")[0];			/* set svgMap to root g */
-
+    console.log(svgMap);
     floorplan = main_chart_svg.node().appendChild(svgMap);		/* floorplan */
   
     d3.select(floorplan).selectAll("rect,polygon,g")//.selectAll("path")		
@@ -136,7 +138,7 @@ function ready(error, data) {
 		return this.parentNode.id + ", " + format(rateById.get(this.parentNode.id))
 	});
 
-    d3.selectAll("rect,polygon").attr("stroke", "black")
+    d3.selectAll("rect,polygon,g").attr("stroke", "black")
 
     d3.select(floorplan).selectAll("rect,polygon")
   	.on("mouseover", function(d)
@@ -154,13 +156,13 @@ function ready(error, data) {
         .on("click", function (d) { zoomed(d3.select(this)); });
 
     /* Let's add an id to each group that wraps a path */
-    d3.select(floorplan).selectAll("rect,polygon")//.selectAll("path")
+    d3.select(floorplan).selectAll("rect,polygon,g")//.selectAll("path")
 	.each(function(d) { 
 	d3.select(this.parentNode).attr("id", this.id);
 	});
 
     /* Now add a text box to the group with content equal to the id of the group */
-    d3.select(floorplan).selectAll("rect,polygon")//.selectAll("g")
+    d3.select(floorplan).selectAll("rect,polygon,g\fc")//.selectAll("g")
 	.append("svg:text")
      	   .text(function(d){ 
 		return this.parentNode.id;
@@ -295,5 +297,15 @@ function getBoundingBox(selection) {
     return [bbox.x, bbox.width, bbox.y, bbox.height, cx, cy];
 }
 d3.select(self.frameElement).style("height", "650px");
+
+function grayed_out(){
+    d3.selectAll("line").style("stroke","black")
+
+    d3.select("#street").style("fill","lightgray")
+    d3.select("#street").style("stroke","lightgray")
+    d3.select("#street-2").style("fill","lightgray")
+    d3.select("#street-2").style("stroke","lightgray")
+}
+
 </script>
 
